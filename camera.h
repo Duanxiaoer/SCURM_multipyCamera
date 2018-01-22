@@ -6,19 +6,13 @@
 #define RM_CAMERA_H
 
 
-class camera {
+class Camera {
 public:
-    void setnum(int num){
-        this->num = num;
-    }
-    //void setwidth(int width);
-    //void setheight(int height);
-
+    Camera(int);
+    void setnum(int);
+    int  getnum();
 private:
     int num;//摄像头个数
-    int width;
-    int height;
-
 };
 
 
