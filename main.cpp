@@ -10,11 +10,15 @@
 
 
 int main() {
-    System system1;
-    system1.setCameraNum(3);
-    system1.setdoubleCamer(true);
-    system1.setwidth(600);
-    system1.setheight(400);
-    system1.startCamera();
-    return 0;
+    try {
+        System system1;
+        system1.setCameraNum(1);
+        system1.setdoubleCamer(true);
+        system1.setwidth(600);
+        system1.setheight(400);
+        system1.startCamera();
+        return 0;
+    }catch (std::exception e){
+        std::cerr<<"The livesystem crashed before begin to work!!!!!";
+    }
 }

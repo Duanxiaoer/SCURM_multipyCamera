@@ -19,7 +19,11 @@ System::System(){
 }
 
 void System::setCameraNum(int n){
-        cameraNum = n;
+    if (n<=0 || n>3){
+        std::cerr<<"摄像头个数应为1～3\n";
+    }
+
+    cameraNum = n;
 }
 
 int System::getCameraNum(){
@@ -27,7 +31,8 @@ int System::getCameraNum(){
 }
 
 void System::setdoubleCamer(bool douCamera){
-        doubleCamera = douCamera;
+
+    doubleCamera = douCamera;
 }
 
 bool System::getdoubleCamer(){
@@ -43,7 +48,10 @@ int System::getscreenRatio(){
 }
 
 void System::setwidth(int wd){
-        width = wd;
+    if (wd<=0){
+        std::cerr<<"width can't be fushu\n";
+    }
+    width = wd;
 }
 
 int System::getwidth(){
@@ -51,7 +59,10 @@ int System::getwidth(){
 }
 
 void System::setheight(int ht){
-        height = ht;
+    if (ht<=0){
+        std::cerr<<"height can't be fushu\n";
+    }
+    height = ht;
 }
 
 int System::getheight(){
@@ -91,8 +102,9 @@ void System::cameraShoot(int width,int height){
             //capture.changeVideoFormat(width,height);
 
             capture>>frame;
-            putText(frame,"按ESC退出",Point(100,100),FONT_HERSHEY_PLAIN,3,Scalar(255,0,0));
-            cv::imshow("show",frame);
+            resize(frame,frame,Size(width,height),0,0);
+            putText(frame,"ESC",Point(100,100),FONT_HERSHEY_PLAIN,1,Scalar(255,0,0));
+            cv::imshow("SCURM_HotPot",frame);
             key = cv::waitKey(1);
             if (key == 27){
                 break;
@@ -114,7 +126,7 @@ void System::cameraShoot2(int width,int height,bool doubleCamera, int screenRati
         char key;
         int changeWin = 1;
         while(1){/*         */
-            cv::resizeWindow("show",width,height);
+            cv::resizeWindow("SCURM_HotPot",width,height);
 //            capture.changeVideoFormat(width,height);
 //            capture1.changeVideoFormat(width,height);
             capture>>frame1;
@@ -122,26 +134,26 @@ void System::cameraShoot2(int width,int height,bool doubleCamera, int screenRati
 
             switch (changeWin){
                 case 1:
-                    putText(frame1,"按ESC退出,1/2/3切换窗口",Point(100,100),FONT_HERSHEY_PLAIN,3,Scalar(255,0,0));
-                    imshow("show",frame1);
+                    putText(frame1,"ESC,1/2/3",Point(100,100),FONT_HERSHEY_PLAIN,1,Scalar(255,0,0));
+                    resize(frame1,frame1,Size(width,height),0,0);
+                    imshow("SCURM_HotPot",frame1);
                     break;
                 case 2:
-                    putText(frame2,"按ESC退出,1/2/3切换窗口",Point(100,100),FONT_HERSHEY_PLAIN,3,Scalar(255,0,0));
-                    imshow("show",frame2);
+                    putText(frame2,"ESC,1/2/3",Point(100,100),FONT_HERSHEY_PLAIN,1,Scalar(255,0,0));
+                    resize(frame2,frame2,Size(width,height),0,0);
+                    imshow("SCURM_HotPot",frame2);
                     break;
                 case 3:
                     resize(frame1,frame1,Size(width/2,height),0,0);
                     resize(frame2,frame2,Size(width/2,height),0,0);
                     temp = frame1;
                     resize(temp,temp,Size(width,height),0,0);
-                    putText(frame1,"按ESC退出,1/2/3切换窗口",Point(100,100),FONT_HERSHEY_PLAIN,3,Scalar(255,0,0));
+                    putText(frame1,"ESC,1/2/3",Point(100,100),FONT_HERSHEY_PLAIN,1,Scalar(255,0,0));
                     imageROI1 = temp(cv::Rect(0,0,frame1.cols,frame1.rows));
                     imageROI2 = temp(cv::Rect(width-frame2.cols,height-frame2.rows,frame2.cols,frame2.rows));
                     frame1.copyTo(imageROI1);
                     frame2.copyTo(imageROI2);
-                    imshow("show",temp);
-                    break;
-                default:
+                    imshow("SCURM_HotPot",temp);
                     break;
             }
 
@@ -187,7 +199,7 @@ void System::cameraShoot3(int width, int height, bool doubleCamera, int screenRa
         char key;
         int changeWin = 1;
         while(1){
-            cv::resizeWindow("show",width,height);
+            cv::resizeWindow("SCURM_HotPot",width,height);
 //            capture0.changeVideoFormat(width,height);
 //            capture1.changeVideoFormat(width,height);
 //            capture2.changeVideoFormat(width,height);
@@ -210,10 +222,10 @@ void System::cameraShoot3(int width, int height, bool doubleCamera, int screenRa
                     if (capture0 == NULL)//摄像头1未打开，则开启摄像头1
                         capture0 = new VideoCapture(0);
 
-                    capture0->operator>>(frame0);
+//                    capture0->operator>>(frame0);     上面已经读过了
                     resize(frame0,frame0,Size(width,height),0,0);
-                    putText(frame0,"ESC,1/2/3/4 change Win",Point(50,50),FONT_HERSHEY_PLAIN,1,Scalar(255,0,0));
-                    imshow("show",frame0);
+                    putText(frame0,"ESC,1/2/3/4",Point(50,50),FONT_HERSHEY_PLAIN,1,Scalar(255,0,0));
+                    imshow("SCURM_HotPot",frame0);
                     break;
                 case 2:
                     if(capture0 != NULL){        //摄像头1打开，则关闭摄像头1
@@ -226,8 +238,8 @@ void System::cameraShoot3(int width, int height, bool doubleCamera, int screenRa
                     }
                     capture1->operator>>(frame1);
                     resize(frame1,frame1,Size(width,height),0,0);
-                    putText(frame1,"ESC,1/2/3/4 change Win",Point(50,50),FONT_HERSHEY_PLAIN,1,Scalar(255,0,0));
-                    imshow("show",frame1);
+                    putText(frame1,"ESC,1/2/3/4",Point(50,50),FONT_HERSHEY_PLAIN,1,Scalar(255,0,0));
+                    imshow("SCURM_HotPot",frame1);
                     break;
                 case 3:
                     if(capture0 != NULL){        //摄像头1打开，则关闭摄像头1
@@ -236,8 +248,8 @@ void System::cameraShoot3(int width, int height, bool doubleCamera, int screenRa
                     }
                     capture2->operator>>(frame2);
                     resize(frame2,frame2,Size(width,height),0,0);
-                    putText(frame2,"ESC,1/2/3/4 change Win",Point(50,50),FONT_HERSHEY_PLAIN,1,Scalar(255,0,0));
-                    imshow("show",frame2);
+                    putText(frame2,"ESC,1/2/3/4",Point(50,50),FONT_HERSHEY_PLAIN,1,Scalar(255,0,0));
+                    imshow("SCURM_HotPot",frame2);
                     break;
                 case 4:
                     if(capture1 == NULL){        //摄像头2打开，则关闭摄像头2
@@ -252,12 +264,12 @@ void System::cameraShoot3(int width, int height, bool doubleCamera, int screenRa
                     resize(frame1,frame1,Size(width/2,height),0,0);
                     resize(frame2,frame2,Size(width/2,height),0,0);
                     resize(frame0,frame0,Size(width,height),0,0);
-                    putText(frame1,"ESC,1/2/3/4 change Win",Point(50,50),FONT_HERSHEY_PLAIN,3,Scalar(255,0,0));
+                    putText(frame1,"ESC,1/2/3/4",Point(50,50),FONT_HERSHEY_PLAIN,3,Scalar(255,0,0));
                     imageROI1 = frame0(cv::Rect(0,0,frame1.cols,frame1.rows));
                     imageROI2 = frame0(cv::Rect(width-frame1.cols,height-frame1.rows,frame1.cols,frame1.rows));
                     frame1.copyTo(imageROI1);
                     frame2.copyTo(imageROI2);
-                    imshow("show",frame0);
+                    imshow("SCURM_HotPot",frame0);
                     break;
             }
 
