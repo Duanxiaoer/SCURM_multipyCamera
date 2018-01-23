@@ -182,10 +182,10 @@ void System::cameraShoot3(int width, int height, bool doubleCamera, int screenRa
     VideoCapture* capture1 = new VideoCapture(1);
     VideoCapture* capture2 = new VideoCapture(2);
 
-    if (capture0 != nullptr && capture1 != nullptr && capture2 != nullptr){
+    if (capture0 != NULL && capture1 != NULL && capture2 != NULL){
         cv::Mat frame0,frame1,frame2,imageROI1,imageROI2;
         char key;
-        int changeWin = 4;
+        int changeWin = 1;
         while(1){
             cv::resizeWindow("show",width,height);
 //            capture0.changeVideoFormat(width,height);
@@ -196,15 +196,18 @@ void System::cameraShoot3(int width, int height, bool doubleCamera, int screenRa
 //            capture2>>frame2;
 
 
-            if (capture0 != nullptr){
+            if (capture0 != NULL){
                 capture0->operator>>(frame0);
             }
-            capture1->operator>>(frame1);
-            capture2->operator>>(frame2);
 
+            //摄像头3始终打开，1和2排斥切换
             switch (changeWin){
                 case 1:
-                    if (capture0 == nullptr)//摄像头1未打开，则开启摄像头1
+                    if(capture1 != NULL){        //摄像头2打开，则关闭摄像头2
+                        delete capture1;
+                        capture1 = NULL ;
+                    }
+                    if (capture0 == NULL)//摄像头1未打开，则开启摄像头1
                         capture0 = new VideoCapture(0);
 
                     capture0->operator>>(frame0);
@@ -213,26 +216,44 @@ void System::cameraShoot3(int width, int height, bool doubleCamera, int screenRa
                     imshow("show",frame0);
                     break;
                 case 2:
+                    if(capture0 != NULL){        //摄像头1打开，则关闭摄像头1
+                        delete capture0;
+                        capture0 = NULL ;
+                    }
+                    if (capture1 == NULL)//摄像头2未打开，则开启摄像头2
+                    {
+                        capture1 = new VideoCapture(1);
+                    }
+                    capture1->operator>>(frame1);
                     resize(frame1,frame1,Size(width,height),0,0);
                     putText(frame1,"ESC,1/2/3/4 change Win",Point(50,50),FONT_HERSHEY_PLAIN,1,Scalar(255,0,0));
                     imshow("show",frame1);
                     break;
                 case 3:
+                    if(capture0 != NULL){        //摄像头1打开，则关闭摄像头1
+                        delete capture0;
+                        capture0 = NULL ;
+                    }
+                    capture2->operator>>(frame2);
                     resize(frame2,frame2,Size(width,height),0,0);
                     putText(frame2,"ESC,1/2/3/4 change Win",Point(50,50),FONT_HERSHEY_PLAIN,1,Scalar(255,0,0));
                     imshow("show",frame2);
                     break;
                 case 4:
-                    if(capture0 != nullptr){        //摄像头1打开，则关闭摄像头1
-                        delete capture0;
-                        capture0 = nullptr ;
+                    if(capture1 == NULL){        //摄像头2打开，则关闭摄像头2
+                        capture1 = new VideoCapture(1) ;
                     }
-
+                    if(capture0 != NULL){        //摄像头1打开，则关闭摄像头1
+                        delete capture0;
+                        capture0 = NULL ;
+                    }
+                    capture1->operator>>(frame1);
+                    capture2->operator>>(frame2);
                     resize(frame1,frame1,Size(width/2,height),0,0);
                     resize(frame2,frame2,Size(width/2,height),0,0);
                     resize(frame0,frame0,Size(width,height),0,0);
                     putText(frame1,"ESC,1/2/3/4 change Win",Point(50,50),FONT_HERSHEY_PLAIN,3,Scalar(255,0,0));
-                    imageROI1 = frame0(cv::Rect(0,0,frame0.cols,frame0.rows));
+                    imageROI1 = frame0(cv::Rect(0,0,frame1.cols,frame1.rows));
                     imageROI2 = frame0(cv::Rect(width-frame1.cols,height-frame1.rows,frame1.cols,frame1.rows));
                     frame1.copyTo(imageROI1);
                     frame2.copyTo(imageROI2);
