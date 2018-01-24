@@ -1,0 +1,2 @@
+# SCURM_multipyCamera
+没有使用黄神的RMVideoCapture
